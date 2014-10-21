@@ -23,6 +23,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Hashtable;
+import org.jboss.as.quickstarts.ejb.remote.secured.RemoteEcho;
 
 /**
  * A sample program which acts a remote client for a EJB deployed on AS7 server.
@@ -38,8 +39,24 @@ public class RemoteEJBClient {
 
         // Invoke a stateful bean
         invokeStatefulBean();
+        
+        invokeUnsecuredBean();
+        
     }
 
+    
+    private static void invokeSecuredBean() throws NamingException {
+        // Let's lookup the remote stateless calculator
+        final RemoteEcho echo = lookupSecuredEcho();
+        echo.secureEcho("Bambulik");
+    }    
+    
+    private static void invokeUnsecuredBean() throws NamingException {
+        // Let's lookup the remote stateless calculator
+        final RemoteEcho echo = lookupUnsecuredEcho();
+        echo.secureEcho("Bambulik");
+    }    
+    
     /**
      * Looks up a stateless bean and invokes on it
      *
@@ -164,4 +181,41 @@ public class RemoteEJBClient {
          "ejb:/jboss-as-ejb-remote-server-side/CounterBean!" + RemoteCounter.class.getName()+"?stateful"
       );
     }
+
+
+    /**
+     * Looks up and returns the proxy to remote stateless calculator bean
+     *
+     * @return
+     * @throws NamingException
+     */
+    private static RemoteEcho lookupSecuredEcho() throws NamingException {
+        final Hashtable jndiProperties = new Hashtable();
+        jndiProperties.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
+        final Context context = new InitialContext(jndiProperties);
+      
+        // let's do the lookup
+      return (RemoteEcho) context.lookup(
+         "ejb:/jboss-as-ejb-remote-server-side/SecuredBean!" + RemoteEcho.class.getName()
+      );
+    }
+
+    /**
+     * Looks up and returns the proxy to remote stateless calculator bean
+     *
+     * @return
+     * @throws NamingException
+     */
+    private static RemoteEcho lookupUnsecuredEcho() throws NamingException {
+        final Hashtable jndiProperties = new Hashtable();
+        jndiProperties.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
+        final Context context = new InitialContext(jndiProperties);
+      
+        // let's do the lookup
+      return (RemoteEcho) context.lookup(
+         "ejb:/jboss-as-ejb-remote-server-side/UnsecuredBean!" + RemoteEcho.class.getName()
+      );
+    }
+    
+    
 }

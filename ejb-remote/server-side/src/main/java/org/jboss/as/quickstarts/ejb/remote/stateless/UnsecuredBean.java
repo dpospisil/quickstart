@@ -5,10 +5,12 @@
  */
 package org.jboss.as.quickstarts.ejb.remote.stateless;
 
+import java.security.Principal;
 import javax.ejb.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
 import org.jboss.as.quickstarts.ejb.remote.secured.RemoteEcho;
 import org.jboss.security.auth.callback.UsernamePasswordHandler;
 import org.jboss.security.client.SecurityClient;
@@ -30,7 +32,7 @@ public class UnsecuredBean implements RemoteEcho {
 
     @Override
     public String secureEcho(String word) {
-        return type2(word);
+        return type1(word);
     }
 
     private String type1(String word) {
@@ -63,5 +65,20 @@ public class UnsecuredBean implements RemoteEcho {
             throw new RuntimeException(e);
         }
     }
+    
+    private String type3(String word) {
+        try {
+            LoginContext lc = Util.getCLMLoginContext(USER, PASSWD);
+            lc.login();
+            try {
+                return secured.secureEcho(word);            
+            } finally {
+                lc.logout();
+            }        
+        } catch (LoginException le) {
+            throw new RuntimeException(le);
+        }
+    }
+        
 
 }

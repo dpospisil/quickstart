@@ -16,7 +16,7 @@
     <groupId>org.jboss.as.quickstarts</groupId>
     <artifactId>jboss-as-ejb-remote-server-side</artifactId>
     <version>7.1.2-SNAPSHOT</version>
-    <packaging>ejb</packaging>
+    <packaging>war</packaging>
     <name>JBoss AS Quickstarts: Server side of remote EJB</name>
 
     <url>http://jboss.org/jbossas</url>
@@ -71,6 +71,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>                       
+            <dependency>
+                <groupId>org.jboss.spec</groupId>
+                <artifactId>jboss-javaee-web-6.0</artifactId>
+                <version>3.0.2.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>                       
         </dependencies>
     </dependencyManagement>
 
@@ -100,6 +107,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+            <version>1.0.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.picketbox</groupId>
             <artifactId>picketbox</artifactId>
             <version>4.1.0.Beta1-redhat-1</version>
@@ -118,7 +132,7 @@
                 <artifactId>jboss-as-maven-plugin</artifactId>
                 <version>${version.org.jboss.as.plugins.maven.plugin}</version>
                 <configuration>
-                    <filename>${project.build.finalName}.jar</filename>
+                    <filename>${project.build.finalName}.war</filename>
                 </configuration>
             </plugin>
             <!-- Compiler plugin enforces Java 1.6 compatibility and activates 
@@ -133,10 +147,10 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ejb-plugin</artifactId>
+                <artifactId>maven-war-plugin</artifactId>
                 <version>${version.ejb.plugin}</version>
                 <configuration>
-                    <ejbVersion>3.1</ejbVersion>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                     <!-- this is false by default -->
                     <generateClient>true</generateClient>
                 </configuration>
